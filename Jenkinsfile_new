@@ -4,6 +4,17 @@ pipeline {
         maven 'Maven3'
         jdk 'java21'
     }
+
+    environment {
+        APP_NAME = 'register-app'
+        RELEASE = '1.0.0'
+        DOCKER_USERNAME = 'akuhub'
+        DOCKER_PASSWORD = 'Akshay@123'
+        IMAGE_NAME = "${DOCKER_USERNAME}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
+
     stages {
         stage('Cleanup Workspace') {
             steps {
@@ -44,6 +55,19 @@ pipeline {
               script{
                 waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
               }
+            }
+        }
+
+        stage('Build & Push Docker Image') {
+            steps{
+                docker.withRegistry('', DOCKER_PASSWORD) {
+                    docker_image = docker.build "${IMAGE_NAME}"
+                }
+
+                docker.withRegistry('', DOCKER_PASSWORD) {
+                    docker_image.push("${IMAGE_TAG}")
+                    docker_image.push('latest')
+                }
             }
         }
     }
