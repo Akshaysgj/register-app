@@ -33,6 +33,6 @@
 
    <h1> Thank You </h1>
    <br>
-   <h1> Happy Learning. visit thrice again </h1>
+   <h1> Happy Learning. visit quatarple again </h1>
    
 </form>
